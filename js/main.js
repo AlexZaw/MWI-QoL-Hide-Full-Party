@@ -1,6 +1,16 @@
-const showHideBtn = document.querySelector(".party-btn");
-const partyList = document.querySelector('[class*="FindParty_partyList"');
-const partys = partyList.children;
+(new MutationObserver(check)).observe(document, {childList: true, subtree: true});
+
+function check(changes, observer) {
+    if(document.querySelector('.MainPanel_mainPanel__Ex2Ir')) {
+      // actions to perform after selector is found
+        observer.disconnect();
+        init()
+    }
+}
+function init(){
+
+}
+
 
 const newSlot = document.createElement("div");
 newSlot.className = "FindParty_partySlot__NldT8, FindParty_empty__3yQSJ";
