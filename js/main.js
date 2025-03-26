@@ -1,32 +1,34 @@
-const ShowHideBtn = document.querySelector(".party-btn");
+const showHideBtn = document.querySelector(".party-btn");
 const partyList = document.querySelector('[class*="FindParty_partyList"');
 const partys = partyList.children;
-let showPartyFlag = 1;
 
-ShowHideBtn.addEventListener("click", fun);
+const newSlot = document.createElement("div");
+newSlot.className = "FindParty_partySlot__NldT8, FindParty_empty__3yQSJ";
+let showFullPartyFlag = false;
 
-function fun() {
-  showPartyFlag = showPartyFlag ? 0 : 1;
-  [...partys].forEach(checkEmptySlot);
+showHideBtn.addEventListener("click", showHide);
 
-  if (showPartyFlag) {
-    ShowHideBtn.innerText = "Hide full";
+function showHide() {
+  showFullPartyFlag = showFullPartyFlag ? false : true;
+  [...partys].forEach(function (party) {
+    if (getPartySlotsInfo(party).length == 0 && showFullPartyFlag == false) {
+      party.classList.add("hidden-party");
+    } else {
+      party.classList.remove("hidden-party");
+    }
+  });
+
+  if (showFullPartyFlag) {
+    showHideBtn.innerText = "Hide full";
   } else {
-    ShowHideBtn.innerText = "Show all";
+    showHideBtn.innerText = "Show all";
   }
 }
-function showAllParty(party) {
-  party.classList.remove("hidden-party");
-}
 
-function checkEmptySlot(party) {
-  const EmptypartySlots = party
+function getPartySlotsInfo(party) {
+  return party
     .querySelector('[class*="FindParty_partySlots"]')
     .querySelectorAll('[class*="FindParty_empty"]');
-  if (EmptypartySlots.length == 0 && !showPartyFlag) {
-    party.classList.add("hidden-party");
-  } else {
-    party.classList.remove("hidden-party");
-  }
 }
-fun();
+
+showHide();
