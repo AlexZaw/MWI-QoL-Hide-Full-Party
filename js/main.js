@@ -3,10 +3,22 @@ hideFullPartyStyle.textContent = `
   .hidden-party {
     display: none !important;
   }
+  .showHideFullparty-chk{
+    accent-color: var(--color-success);
+    margin: 0;
+    width: 20px;
+    height: 21px;
+
+  }
+
+  .showHideContainer {
+    gap: 10px;
+  }
   `;
 
 document.head.appendChild(hideFullPartyStyle);
-let showHideBtn;
+let showHideCheckbox;
+let showHideText;
 let showFullPartyFlag = true;
 
 new MutationObserver(waitMainPanelElem).observe(document, {
@@ -22,7 +34,6 @@ function waitMainPanelElem(changes, observer) {
 }
 
 function observeMainPanelChanges() {
-    console.log('observeMainPanelChanges');
     new MutationObserver(onMainPanelChange).observe(
         document.querySelector('.MainPanel_mainPanel__Ex2Ir'),
         {
@@ -33,55 +44,49 @@ function observeMainPanelChanges() {
 }
 
 function onMainPanelChange(mutationList) {
-    console.log('onMainPanelChanges');
     try {
         if (
             document
                 .querySelector('.FindParty_optionsContainer__3WFfI')
                 .querySelector('.Button_button__1Fe9z')
         ) {
-            console.log('try if');
             addButton();
         }
     } catch (error) {
-        console.log(error);
-        showFullPartyFlag = true;
-
         return false;
     }
 
     try {
         if (document.querySelector('.FindParty_partyList__3lirO')) {
-            console.log('try if2');
             observePartyList();
         }
     } catch (error) {
-        console.log('error 2');
-
         return false;
     }
 }
 
 function addButton() {
-    console.log('addButton', showFullPartyFlag);
-
-    if (!document.querySelector('.showHideFullparty-btn')) {
-        showHideBtn = document.createElement('button');
-        showHideBtn.classList.add(
-            'showHideFullparty-btn',
-            'Button_button__1Fe9z'
+    if (!document.querySelector('.showHideFullparty-chk')) {
+        const showHideContainer = document.createElement('label');
+        showHideText = document.createElement('span');
+        showHideCheckbox = document.createElement('input');
+        showHideCheckbox.type = 'checkbox';
+        showHideContainer.classList.add(
+            'Button_button__1Fe9z',
+            'showHideContainer'
         );
-        showHideBtn.innerText = 'Hide full';
-        showHideBtn.addEventListener('click', showHide);
+        showHideCheckbox.classList.add('showHideFullparty-chk');
+        showHideText.innerText = 'Hide full';
+        showHideCheckbox.addEventListener('change', showHide);
+        showHideContainer.appendChild(showHideCheckbox);
+        showHideContainer.appendChild(showHideText);
         document
             .querySelector('.FindParty_optionsContainer__3WFfI')
-            .appendChild(showHideBtn);
+            .appendChild(showHideContainer);
     }
 }
 
 function observePartyList() {
-    console.log('observePartyList');
-
     new MutationObserver(showHide).observe(
         document.querySelector('.FindParty_partyList__3lirO'),
         {
@@ -91,14 +96,15 @@ function observePartyList() {
 }
 
 function showHide(mutationList, observer) {
-    observer ? observer.disconnect() : false;
-
-    console.log('showHide', showFullPartyFlag);
+    if (showHideCheckbox.checked) {
+        showFullPartyFlag = false;
+    } else {
+        showFullPartyFlag = true;
+    }
 
     const partyList = document.querySelector(
         '.FindParty_partyList__3lirO'
     ).children;
-    showFullPartyFlag = showFullPartyFlag ? false : true;
     [...partyList].forEach(function (party) {
         if (!isFree(party) && showFullPartyFlag == false) {
             party.classList.add('hidden-party');
@@ -106,12 +112,6 @@ function showHide(mutationList, observer) {
             party.classList.remove('hidden-party');
         }
     });
-
-    if (showFullPartyFlag) {
-        showHideBtn.innerText = 'Hide full';
-    } else {
-        showHideBtn.innerText = 'Show all';
-    }
 }
 
 function isFree(party) {
