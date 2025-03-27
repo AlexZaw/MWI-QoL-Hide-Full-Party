@@ -1,9 +1,9 @@
 const hideFullPartyStyle = document.createElement('style');
 hideFullPartyStyle.textContent = `
-.hidden-party {
-  display: none !important;
-}
-`;
+  .hidden-party {
+    display: none !important;
+  }
+  `;
 
 document.head.appendChild(hideFullPartyStyle);
 let showHideBtn;
@@ -22,7 +22,7 @@ function waitMainPanelElem(changes, observer) {
 }
 
 function observeMainPanelChanges() {
-    console.log('checkMainPanelChanges');
+    console.log('observeMainPanelChanges');
     new MutationObserver(onMainPanelChange).observe(
         document.querySelector('.MainPanel_mainPanel__Ex2Ir'),
         {
@@ -32,21 +32,39 @@ function observeMainPanelChanges() {
     );
 }
 
-function onMainPanelChange() {
+function onMainPanelChange(mutationList) {
+    console.log('onMainPanelChanges');
     try {
         if (
             document
                 .querySelector('.FindParty_optionsContainer__3WFfI')
                 .querySelector('.Button_button__1Fe9z')
         ) {
+            console.log('try if');
             addButton();
         }
     } catch (error) {
+        console.log(error);
+        showFullPartyFlag = true;
+
+        return false;
+    }
+
+    try {
+        if (document.querySelector('.FindParty_partyList__3lirO')) {
+            console.log('try if2');
+            observePartyList();
+        }
+    } catch (error) {
+        console.log('error 2');
+
         return false;
     }
 }
 
 function addButton() {
+    console.log('addButton', showFullPartyFlag);
+
     if (!document.querySelector('.showHideFullparty-btn')) {
         showHideBtn = document.createElement('button');
         showHideBtn.classList.add(
@@ -61,7 +79,22 @@ function addButton() {
     }
 }
 
-function showHide() {
+function observePartyList() {
+    console.log('observePartyList');
+
+    new MutationObserver(showHide).observe(
+        document.querySelector('.FindParty_partyList__3lirO'),
+        {
+            childList: true,
+        }
+    );
+}
+
+function showHide(mutationList, observer) {
+    observer ? observer.disconnect() : false;
+
+    console.log('showHide', showFullPartyFlag);
+
     const partyList = document.querySelector(
         '.FindParty_partyList__3lirO'
     ).children;
